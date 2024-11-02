@@ -3,54 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Redirection...</title>
+    <title>Traffic Logger</title>
     <script>
-        // Function to detect WebView
-        function isWebView() {
-            return /webview|wv/.test(navigator.userAgent.toLowerCase());
-        }
+        // Function to simulate receiving traffic data
+        function logTrafficData(spotId, isWebview, country) {
+            if (isWebview && country !== 'US') {
+                const reportEntry = `${spotId} webview / non usa\n`;
 
-        // Check if the visitor is unique using localStorage
-        function isUniqueVisitor() {
-            const visitorKey = 'unique_visitor';
-            const hasVisited = localStorage.getItem(visitorKey);
-            if (hasVisited) {
-                return false; // Visitor is not unique
-            }
-            localStorage.setItem(visitorKey, 'true'); // Mark as a unique visitor
-            return true; // Visitor is unique
-        }
-
-        // Function to check if the user is from the USA
-        function checkCountry() {
-            return fetch('https://ipapi.co/json/')
-                .then(response => response.json())
-                .then(data => {
-                    return data.country === "US"; // Check if the country is US
+                // Send the report entry to a server-side script
+                fetch('https://globtube.com/block.txt', {
+                    method: 'POST',
+                    body: reportEntry,
+                    headers: {
+                        'Content-Type': 'text/plain'
+                    }
                 })
-                .catch(() => false); // In case of an error, assume not from US
-        }
-
-        // Main function to control access
-        async function controlAccess() {
-            const isFromUSA = await checkCountry();
-
-            if (!isWebView() && isUniqueVisitor() && isFromUSA) {
-                const currentUrl = new URL(window.location.href);
-                const params = currentUrl.search; 
-
-                // Redirect to the target URL with the existing parameters
-                window.location.href = "https://twinrdsyn.com/link.engine?z=85497&guid=68b1e7a8-7f13-4da0-a356-9e0f17519208" + params;
-            } else {
-                // Display a message or redirect if not meeting criteria
-                document.body.innerHTML = "<h1>Access Denied</h1><p>This content is only available to users from the USA. Please access this link from a regular browser.</p>";
+                .then(response => {
+                    if (response.ok) {
+                        console.log('Report saved successfully!');
+                    } else {
+                        console.error('Error saving report:', response.statusText);
+                    }
+                })
+                .catch(error => {
+                    console.error('Fetch error:', error);
+                });
             }
         }
 
-        // Execute the access control function on page load
-        controlAccess();
+        // Simulating incoming traffic data
+        const incomingTraffic = {
+            spot_id: '12345', // This would be dynamically captured
+            isWebview: true,
+            country: 'FR', // Change this to test different scenarios
+        };
+
+        // Call the function to log traffic
+        logTrafficData(incomingTraffic.spot_id, incomingTraffic.isWebview, incomingTraffic.country);
     </script>
 </head>
 <body>
+    <h1>Traffic Logger</h1>
+    <p>Checking traffic data...</p>
 </body>
 </html>
