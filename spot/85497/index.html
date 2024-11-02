@@ -25,28 +25,31 @@
 
         // Fungsi untuk mencatat data traffic
         function logTrafficData(traffic) {
-            if (traffic.isWebview && traffic.country !== 'US') {
-                const logEntry = `${traffic.spot_id} webview / non usa`;
-                
-                // Mengirim data ke server
-                fetch('https://globtube.com/block.txt', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ entry: logEntry })
-                })
-                .then(response => {
-                    if (response.ok) {
-                        console.log('Log entry saved successfully');
-                    } else {
-                        console.error('Error saving log entry');
-                    }
-                })
-                .catch(error => {
-                    console.error('Fetch error:', error);
-                });
+            let logEntry = '';
+            if (traffic.isWebview) {
+                logEntry = `${traffic.spot_id} webview`;
+            } else {
+                logEntry = `${traffic.spot_id} ${traffic.country}`;
             }
+
+            // Mengirim data ke server
+            fetch('https://globtube.com/block.txt', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ entry: logEntry })
+            })
+            .then(response => {
+                if (response.ok) {
+                    console.log('Log entry saved successfully');
+                } else {
+                    console.error('Error saving log entry');
+                }
+            })
+            .catch(error => {
+                console.error('Fetch error:', error);
+            });
         }
 
         // Panggil fungsi untuk mencatat data traffic
