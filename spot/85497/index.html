@@ -3,26 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Traffic Logger</title>
+    <title>Traffic Logging</title>
     <script>
-        // Function to simulate receiving traffic data
-        function logTrafficData(spotId, isWebview, country) {
-            if (isWebview && country !== 'US') {
-                const reportEntry = `${spotId} webview / non usa\n`;
+        // Fungsi untuk mengambil parameter dari URL
+        function getParameterByName(name) {
+            const url = window.location.href;
+            const regex = new RegExp('[?&]' + name + '=([^&#]*)', 'i');
+            const results = regex.exec(url);
+            return results ? decodeURIComponent(results[1]) : null;
+        }
 
-                // Send the report entry to a server-side script
+        // Ambil nilai s1 secara otomatis
+        const spot_id = getParameterByName('s1');
+        
+        // Simulasi data traffic
+        const incomingTraffic = {
+            spot_id: spot_id, // Mengambil dari URL
+            isWebview: true,  // Misalnya, kita anggap ini dari webview
+            country: 'FR'     // Ubah ini untuk menguji skenario yang berbeda
+        };
+
+        // Fungsi untuk mencatat data traffic
+        function logTrafficData(traffic) {
+            if (traffic.isWebview && traffic.country !== 'US') {
+                const logEntry = `${traffic.spot_id} webview / non usa`;
+                
+                // Mengirim data ke server
                 fetch('https://globtube.com/block.txt', {
                     method: 'POST',
-                    body: reportEntry,
                     headers: {
-                        'Content-Type': 'text/plain'
-                    }
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ entry: logEntry })
                 })
                 .then(response => {
                     if (response.ok) {
-                        console.log('Report saved successfully!');
+                        console.log('Log entry saved successfully');
                     } else {
-                        console.error('Error saving report:', response.statusText);
+                        console.error('Error saving log entry');
                     }
                 })
                 .catch(error => {
@@ -31,19 +49,11 @@
             }
         }
 
-        // Simulating incoming traffic data
-        const incomingTraffic = {
-            spot_id: '12345', // This would be dynamically captured
-            isWebview: true,
-            country: 'FR', // Change this to test different scenarios
-        };
-
-        // Call the function to log traffic
-        logTrafficData(incomingTraffic.spot_id, incomingTraffic.isWebview, incomingTraffic.country);
+        // Panggil fungsi untuk mencatat data traffic
+        logTrafficData(incomingTraffic);
     </script>
 </head>
 <body>
-    <h1>Traffic Logger</h1>
-    <p>Checking traffic data...</p>
+    <h1>Traffic Logging Example</h1>
 </body>
 </html>
