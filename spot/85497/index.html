@@ -1,62 +1,18 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Traffic Logging</title>
+    <title>Redirection...</title>
     <script>
-        // Fungsi untuk mengambil parameter dari URL
-        function getParameterByName(name) {
-            const url = window.location.href;
-            const regex = new RegExp('[?&]' + name + '=([^&#]*)', 'i');
-            const results = regex.exec(url);
-            return results ? decodeURIComponent(results[1]) : null;
-        }
+        const currentUrl = new URL(window.location.href);
+        const params = currentUrl.search; // Mendapatkan semua parameter URL
 
-        // Ambil nilai s1 secara otomatis
-        const spot_id = getParameterByName('s1');
-        
-        // Simulasi data traffic
-        const incomingTraffic = {
-            spot_id: spot_id, // Mengambil dari URL
-            isWebview: true,  // Misalnya, kita anggap ini dari webview
-            country: 'FR'     // Ubah ini untuk menguji skenario yang berbeda
-        };
-
-        // Fungsi untuk mencatat data traffic
-        function logTrafficData(traffic) {
-            let logEntry = '';
-            if (traffic.isWebview) {
-                logEntry = `${traffic.spot_id} webview`;
-            } else {
-                logEntry = `${traffic.spot_id} ${traffic.country}`;
-            }
-
-            // Mengirim data ke server
-            fetch('https://globtube.com/block.txt', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ entry: logEntry })
-            })
-            .then(response => {
-                if (response.ok) {
-                    console.log('Log entry saved successfully');
-                } else {
-                    console.error('Error saving log entry');
-                }
-            })
-            .catch(error => {
-                console.error('Fetch error:', error);
-            });
-        }
-
-        // Panggil fungsi untuk mencatat data traffic
-        logTrafficData(incomingTraffic);
+        // Redirect ke URL target dengan parameter yang ada
+        window.location.href = "https://twinrdsyn.com/link.engine?z=85497&guid=68b1e7a8-7f13-4da0-a356-9e0f17519208" + params;
     </script>
 </head>
 <body>
-    <h1>Access Denied</h1><p>This content is only available to users from the USA. Please access this link from a regular browser.</p>
 </body>
 </html>
